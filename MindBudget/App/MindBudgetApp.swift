@@ -13,7 +13,7 @@ struct MindBudgetApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainView()
+            MainTabView()
                 .environment(\.managedObjectContext, coreDataManager.viewContext)
         }
     }
