@@ -7,13 +7,22 @@
 
 import SwiftUI
 
+enum HomeSection: String, CaseIterable, Identifiable {
+    case budget
+    case categoriesSummary
+    case recentTransactions
+    
+    var id: String { self.rawValue }
+}
+
 struct HomeView: View {
     var body: some View {
-        VStack {
+        NavigationStack {
             BudgetView()
             CategoriesSummaryView()
             RecentTransactionsView()
         }
+        
     }
 }
 
