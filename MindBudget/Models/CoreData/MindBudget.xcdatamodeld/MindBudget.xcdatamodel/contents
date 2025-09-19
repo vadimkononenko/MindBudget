@@ -17,11 +17,11 @@
     <entity name="Category" representedClassName="Category" syncable="YES">
         <attribute name="color" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="descriptionText" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isActive" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isDefault" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" attributeType="String"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="goals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FinancialGoal" inverseName="category" inverseEntity="FinancialGoal"/>
@@ -30,8 +30,8 @@
     </entity>
     <entity name="FinancialGoal" representedClassName="FinancialGoal" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="descriptionText" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="priority" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="targetAmount" attributeType="Decimal" defaultValueString="0.0"/>
@@ -57,16 +57,16 @@
     <entity name="Transaction" representedClassName="Transaction" syncable="YES">
         <attribute name="amount" attributeType="Decimal" defaultValueString="0.0"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="currency" attributeType="String"/>
+        <attribute name="currencyCode" attributeType="String"/>
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="descriptionText" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isArchived" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="location" optional="YES" attributeType="String"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="budget" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Budget" inverseName="transactions" inverseEntity="Budget"/>
-        <relationship name="category" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="transactions" inverseEntity="Category"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="transactions" inverseEntity="Category"/>
         <relationship name="images" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TransactionImage" inverseName="transaction" inverseEntity="TransactionImage"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="transactions" inverseEntity="Tag"/>
     </entity>

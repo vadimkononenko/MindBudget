@@ -19,9 +19,9 @@ extension Transaction {
     @NSManaged public var id: UUID?
     @NSManaged public var amount: NSDecimalNumber?
     @NSManaged public var type: String?
-    @NSManaged public var descriptionText: String?
+    @NSManaged public var note: String?
     @NSManaged public var date: Date?
-    @NSManaged public var currency: String?
+    @NSManaged public var currencyCode: String?
     @NSManaged public var location: String?
     @NSManaged public var isArchived: Bool
     @NSManaged public var createdAt: Date?

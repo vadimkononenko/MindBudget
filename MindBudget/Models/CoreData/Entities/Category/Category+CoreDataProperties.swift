@@ -18,7 +18,7 @@ extension Category {
 
     @NSManaged public var id: UUID?
     @NSManaged public var name: String?
-    @NSManaged public var descriptionText: String?
+    @NSManaged public var note: String?
     @NSManaged public var type: String?
     @NSManaged public var color: String?
     @NSManaged public var isDefault: Bool

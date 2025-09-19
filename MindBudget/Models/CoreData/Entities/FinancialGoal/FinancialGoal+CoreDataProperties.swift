@@ -18,7 +18,7 @@ extension FinancialGoal {
 
     @NSManaged public var id: UUID?
     @NSManaged public var title: String?
-    @NSManaged public var descriptionText: String?
+    @NSManaged public var note: String?
     @NSManaged public var targetAmount: NSDecimalNumber?
     @NSManaged public var startDate: Date?
     @NSManaged public var targetDate: Date?
