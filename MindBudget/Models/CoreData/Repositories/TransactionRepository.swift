@@ -27,13 +27,12 @@ protocol TransactionRepositoryProtocol {
                            type: TransactionType,
                            categoryID: UUID?) -> Result<Transaction, TransactionRepositoryError>
     func fetchAllTransactions() -> Result<[Transaction], TransactionRepositoryError>
-    func fetchTransaction(by id: UUID) -> Result<Transaction, TransactionRepositoryError>
+    func fetchTransaction(by id: UUID) -> Result<Transaction?, TransactionRepositoryError>
     func updateTransaction(id: UUID,
                            amount: Decimal?,
                            date: Date?,
-                           note: String?,
-                           categoryID: UUID?) -> Result<Transaction?, TransactionRepositoryError>
-    func deleteTransaction(id: UUID) -> Result<Transaction?, TransactionRepositoryError>
+                           note: String?) -> Result<Transaction?, TransactionRepositoryError>
+    func deleteTransaction(id: UUID) -> Result<Bool, TransactionRepositoryError>
 }
 
 // MARK: - TransactionRepository
@@ -87,28 +86,85 @@ extension TransactionRepository {
 // MARK: - Read
 extension TransactionRepository {
     func fetchAllTransactions() -> Result<[Transaction], TransactionRepositoryError> {
-        // TODO: Finish Logic
-        return .success([])
+        let request = NSFetchRequest<Transaction>(entityName: "Transaction")
+        
+        do {
+            let transactions = try context.fetch(request)
+            return .success(transactions)
+        } catch {
+            return .failure(.fetchFailed)
+        }
     }
     
-    func fetchTransaction(by id: UUID) -> Result<Transaction, TransactionRepositoryError> {
-        // TODO: Finish Logic
-        return .success(Transaction())
+    func fetchTransaction(by id: UUID) -> Result<Transaction?, TransactionRepositoryError> {
+        let request = NSFetchRequest<Transaction>(entityName: "Transaction")
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        do {
+            let transaction = try context.fetch(request)
+            return .success(transaction.first)
+        } catch {
+            return .failure(.fetchFailed)
+        }
     }
 }
 
 // MARK: - Update
 extension TransactionRepository {
-    func updateTransaction(id: UUID, amount: Decimal?, date: Date?, note: String?, categoryID: UUID?) -> Result<Transaction?, TransactionRepositoryError> {
-        // TODO: Finish Logic
-        return .success(nil)
+    func updateTransaction(id: UUID,
+                           amount: Decimal?,
+                           date: Date?,
+                           note: String?) -> Result<Transaction?, TransactionRepositoryError> {
+        let transaction = fetchTransaction(by: id)
+        
+        switch transaction {
+        case .success(let transaction):
+            guard let transaction else { return .failure(.transactionNotFound) }
+            
+            if let amount {
+                transaction.amount = amount as NSDecimalNumber
+            }
+            
+            if let date {
+                transaction.date = date
+            }
+            
+            if let note {
+                transaction.note = note
+            }
+            
+            transaction.updatedAt = Date()
+            
+            do {
+                try context.save()
+                return .success(transaction)
+            } catch {
+                return .failure(.updateFailed)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 }
 
 // MARK: - Delete
 extension TransactionRepository {
-    func deleteTransaction(id: UUID) -> Result<Transaction?, TransactionRepositoryError> {
-        // TODO: Finish Logic
-        return .success(nil)
+    func deleteTransaction(id: UUID) -> Result<Bool, TransactionRepositoryError> {
+        let transaction = fetchTransaction(by: id)
+        
+        switch transaction {
+        case .success(let transaction):
+            guard let transaction else { return .failure(.transactionNotFound)}
+            
+            context.delete(transaction)
+            
+            do {
+                try context.save()
+                return .success(true)
+            } catch {
+                return .failure(.deletionFailed)
+            }
+        case .failure(let error):
+            return .failure(error)
+        }
     }
 }
