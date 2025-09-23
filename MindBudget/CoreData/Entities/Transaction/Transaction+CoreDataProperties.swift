@@ -22,7 +22,6 @@ extension Transaction {
     @NSManaged public var note: String?
     @NSManaged public var date: Date?
     @NSManaged public var currencyCode: String?
-    @NSManaged public var location: String?
     @NSManaged public var isArchived: Bool
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
@@ -64,9 +63,5 @@ extension Transaction {
 
     @objc(removeTags:)
     @NSManaged public func removeFromTags(_ values: NSSet)
-
-}
-
-extension Transaction : Identifiable {
 
 }

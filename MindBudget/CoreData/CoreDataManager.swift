@@ -7,10 +7,15 @@
 import CoreData
 
 final class CoreDataManager {
+    // MARK: - Shared Instance
     static let shared = CoreDataManager()
     
-    private init() {}
+    // MARK: - Init
+    private init() {
+        printCoreDataURL()
+    }
 
+    // MARK: - Persistent Containers
     let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "MindBudget")
         container.loadPersistentStores { _, error in
@@ -35,16 +40,29 @@ final class CoreDataManager {
         return container
     }()
 
+    // MARK: - Contexts
     var viewContext: NSManagedObjectContext {
         persistentContainer.viewContext
     }
+    
+    var backgroundContext: NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
 
-    func save(context: NSManagedObjectContext) throws {
+    // MARK: - Saving
+    func save(_ context: NSManagedObjectContext = CoreDataManager.shared.viewContext) throws {
         guard context.hasChanges else { return }
         do {
             try context.save()
         } catch {
             throw error
+        }
+    }
+    
+    
+    func printCoreDataURL() {
+        if let url = persistentContainer.persistentStoreDescriptions.first?.url {
+            print(url)
         }
     }
 }

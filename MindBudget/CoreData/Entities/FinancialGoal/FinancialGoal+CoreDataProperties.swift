@@ -17,12 +17,13 @@ extension FinancialGoal {
     }
 
     @NSManaged public var id: UUID?
-    @NSManaged public var title: String?
+    @NSManaged public var name: String?
     @NSManaged public var note: String?
     @NSManaged public var targetAmount: NSDecimalNumber?
     @NSManaged public var startDate: Date?
     @NSManaged public var targetDate: Date?
     @NSManaged public var priority: Int16
+    @NSManaged public var isFinished: Bool
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var category: Category?
