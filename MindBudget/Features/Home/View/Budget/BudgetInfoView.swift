@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct BudgetInfoView: View {
+    @Environment(HomeViewModel.self) private var viewModel
+    
+    var budget: Budget
+    
     var body: some View {
         VStack {
             HStack {
-                Text("1000 $")
-                Text("available")
+                Text(viewModel.formatAmountWithCurrencySymbol(amount: budgetPlannedAmount, for: budget))
             }
             
             HStack {
@@ -30,6 +33,17 @@ struct BudgetInfoView: View {
     }
 }
 
-#Preview {
-    BudgetInfoView()
+// MARK: - Computed Properties
+extension BudgetInfoView {
+    var budgetPlannedAmount: Double {
+        return viewModel.getPlannedAmount(for: budget)
+    }
+    
+    var budgetActualIncome: Double {
+        return viewModel.getActualIncome(for: budget)
+    }
+    
+    var budgetActualExpences: Double {
+        return viewModel.getActualExpences(for: budget)
+    }
 }

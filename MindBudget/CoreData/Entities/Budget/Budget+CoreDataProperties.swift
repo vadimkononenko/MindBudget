@@ -24,6 +24,7 @@ extension Budget {
     @NSManaged public var isActive: Bool
     @NSManaged public var totalExpectedIncome: NSDecimalNumber?
     @NSManaged public var totalExpectedExpenses: NSDecimalNumber?
+    @NSManaged public var plannedAmount: NSDecimalNumber?
     @NSManaged public var currencyRaw: String?
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
@@ -34,15 +35,26 @@ extension Budget {
 // MARK: - Computed Properties
 extension Budget {
     var actualIncome: Decimal {
-        return 0
+        let transactions = self.transactions as? Set<Transaction> ?? []
+        return transactions
+            .filter { transaction in
+                transaction.type == TransactionType.income.rawValue
+            }
+            .reduce(0) { $0 + ($1.amount?.decimalValue ?? 0) }
     }
     
     var actualExpences: Decimal {
-        return 0
+        let transactions = self.transactions as? Set<Transaction> ?? []
+        return transactions
+            .filter { transaction in
+                transaction.type == TransactionType.expense.rawValue
+            }
+            .reduce(0) { $0 + ($1.amount?.decimalValue ?? 0) }
     }
     
     var remainingBudget: Decimal {
-        return 0
+        let plannedAmount = plannedAmount?.decimalValue ?? 0
+        return plannedAmount - (actualIncome + actualExpences)
     }
     
     var progressPercentage: Double {
@@ -52,14 +64,12 @@ extension Budget {
     // For Enum
     var period: BudgetPeriod {
         get { BudgetPeriod(rawValue: periodRaw ?? "week") ?? .week }
-        // TODO: Finish Setter For Period
-        set { }
+        set { periodRaw = newValue.rawValue }
     }
     
     var currency: AppCurrency {
-        get { AppCurrency(rawValue: currencyRaw ?? "uah") ?? .uah }
-        // TODO: Finish Setter For Currency
-        set { }
+        get { AppCurrency(rawValue: currencyRaw ?? AppCurrency.uah.rawValue) ?? .uah }
+        set { currencyRaw = newValue.rawValue }
     }
 }
 

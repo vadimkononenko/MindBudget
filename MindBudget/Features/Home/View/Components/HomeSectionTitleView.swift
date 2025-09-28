@@ -14,6 +14,7 @@ struct HomeSectionTitleView: View {
     var body: some View {
         HStack {
             Text(title.capitalized)
+                .font(.title2)
             
             Spacer()
             

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct RecentTransactionsView: View {
+    @Environment(HomeViewModel.self) private var viewModel
+    
     private let sectionTitle = "Recent Transactions"
     
     var body: some View {
@@ -16,7 +18,7 @@ struct RecentTransactionsView: View {
                 // TODO: Navigation To View All
             }
             
-            RecentTransactionListView()
+            RecentTransactionListView(transactions: viewModel.transactions)
         }
     }
 }

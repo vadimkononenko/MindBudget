@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 
 extension Category {
@@ -21,12 +22,13 @@ extension Category {
     @NSManaged public var note: String?
     @NSManaged public var type: String?
     @NSManaged public var color: String?
+    @NSManaged public var iconSystemName: String?
     @NSManaged public var isDefault: Bool
     @NSManaged public var isActive: Bool
+    @NSManaged public var isSystemIcon: Bool
     @NSManaged public var createdAt: Date?
     @NSManaged public var updatedAt: Date?
     @NSManaged public var transactions: NSSet?
-    @NSManaged public var icon: Icon?
     @NSManaged public var goals: NSSet?
 
 }

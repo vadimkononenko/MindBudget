@@ -16,12 +16,15 @@ enum HomeSection: String, CaseIterable, Identifiable {
 }
 
 struct HomeView: View {
+    @State private var viewModel: HomeViewModel = HomeViewModel(serviceContainer: ServiceContainer())
+    
     var body: some View {
         NavigationStack {
             BudgetView()
             CategoriesSummaryView()
             RecentTransactionsView()
         }
+        .environment(viewModel)
     }
 }
 

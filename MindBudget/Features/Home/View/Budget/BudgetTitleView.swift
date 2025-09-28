@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct BudgetTitleView: View {
+    var budget: Budget
+    
     var body: some View {
         HStack {
-            Text("Monthly Budget")
+            Text(budgetTitle)
             
             Spacer()
             
             Button {
-                //
+                // TODO: Finish Action
             } label: {
                 Image(systemName: "ellipsis.circle")
             }
@@ -23,6 +25,8 @@ struct BudgetTitleView: View {
     }
 }
 
-#Preview {
-    BudgetTitleView()
+extension BudgetTitleView {
+    private var budgetTitle: String {
+        return budget.name ?? "Untitled Budget"
+    }
 }

@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct RecentTransactionListView: View {
+    var transactions: [Transaction]
+    
     var body: some View {
         List {
-            ForEach(1..<6) { index in
-                RecentTransactionRowView()
+            ForEach(transactions, id: \.id) { transaction in
+                RecentTransactionRowView(transaction: transaction)
                     .listRowSeparator(.hidden)
             }
         }
@@ -19,6 +21,6 @@ struct RecentTransactionListView: View {
     }
 }
 
-#Preview {
-    RecentTransactionListView()
-}
+//#Preview {
+//    RecentTransactionListView()
+//}

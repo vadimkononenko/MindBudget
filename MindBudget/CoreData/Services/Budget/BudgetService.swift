@@ -13,7 +13,10 @@ protocol BudgetServiceProtocol {
         period: BudgetPeriod,
         currency: AppCurrency,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
+        plannedAmount: Decimal,
+        totalExpectedExpenses: Decimal,
+        totalExpectedIncome: Decimal
     ) throws -> Budget
     func fetchActiveBudgets() -> [Budget]
     func fetchBudget(by id: UUID) -> Budget?
@@ -23,7 +26,10 @@ protocol BudgetServiceProtocol {
         period: String?,
         currency: String?,
         startDate: Date?,
-        endDate: Date?
+        endDate: Date?,
+        plannedAmount: Decimal?,
+        totalExpectedExpenses: Decimal?,
+        totalExpectedIncome: Decimal?
     ) throws -> Bool
     func deactivateBudget(_ budget: Budget) throws -> Bool
     func calculateBudgetProgress(_ budget: Budget) -> (
@@ -39,7 +45,10 @@ class BudgetService: BaseService, BudgetServiceProtocol {
         period: BudgetPeriod,
         currency: AppCurrency,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
+        plannedAmount: Decimal,
+        totalExpectedExpenses: Decimal,
+        totalExpectedIncome: Decimal
     ) throws -> Budget {
         let budget = Budget(context: context)
         budget.id = UUID()
@@ -51,8 +60,9 @@ class BudgetService: BaseService, BudgetServiceProtocol {
         budget.isActive = true
         budget.createdAt = Date()
         budget.updatedAt = Date()
-        budget.totalExpectedExpenses = 0
-        budget.totalExpectedIncome = 0
+        budget.plannedAmount = plannedAmount as NSDecimalNumber
+        budget.totalExpectedExpenses = totalExpectedExpenses as NSDecimalNumber
+        budget.totalExpectedIncome = totalExpectedIncome as NSDecimalNumber
             
         try save()
         return budget
@@ -82,13 +92,19 @@ class BudgetService: BaseService, BudgetServiceProtocol {
         period: String?,
         currency: String?,
         startDate: Date?,
-        endDate: Date?
+        endDate: Date?,
+        plannedAmount: Decimal?,
+        totalExpectedExpenses: Decimal?,
+        totalExpectedIncome: Decimal?
     ) throws -> Bool {
         if let name = name { budget.name = name }
         if let period = period { budget.periodRaw = period }
         if let currency = currency { budget.currencyRaw = currency }
         if let startDate = startDate { budget.startDate = startDate }
         if let endDate = endDate { budget.endDate = endDate }
+        if let plannedAmount = plannedAmount { budget.plannedAmount = plannedAmount as NSDecimalNumber }
+        if let totalExpectedExpenses = totalExpectedExpenses { budget.totalExpectedExpenses = totalExpectedExpenses as NSDecimalNumber }
+        if let totalExpectedIncome = totalExpectedIncome { budget.totalExpectedIncome = totalExpectedIncome as NSDecimalNumber }
         budget.updatedAt = Date()
             
         try save()

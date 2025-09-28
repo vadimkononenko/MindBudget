@@ -13,7 +13,6 @@ protocol CategoryServiceProtocol {
         type: TransactionType,
         color: String,
         isDefault: Bool,
-        icon: Icon?,
         note: String?
     ) throws -> Category
     func fetchActiveCategories(type: TransactionType?) -> [Category]
@@ -33,7 +32,6 @@ class CategoryService: BaseService, CategoryServiceProtocol {
         type: TransactionType,
         color: String,
         isDefault: Bool,
-        icon: Icon?,
         note: String?
     ) throws -> Category {
         let category = Category(context: context)
@@ -43,7 +41,6 @@ class CategoryService: BaseService, CategoryServiceProtocol {
         category.color = color
         category.isDefault = isDefault
         category.isActive = true
-        category.icon = icon
         category.note = note
         category.createdAt = Date()
         category.updatedAt = Date()
