@@ -6,31 +6,41 @@
 //
 
 import Foundation
+import CoreData
 
 class ServiceContainer {
     private let coreDataManager: CoreDataManager
+    private let usePreview: Bool
     
-    init(coreDataManager: CoreDataManager = CoreDataManager.shared) {
+    init(
+        coreDataManager: CoreDataManager = CoreDataManager.shared,
+        usePreview: Bool = false
+    ) {
         self.coreDataManager = coreDataManager
+        self.usePreview = usePreview
+    }
+    
+    private var context: NSManagedObjectContext {
+        usePreview ? coreDataManager.previewContext : coreDataManager.viewContext
     }
     
     lazy var budgetService: BudgetServiceProtocol = {
-        BudgetService(context: coreDataManager.viewContext)
+        BudgetService(context: context)
     }()
     
     lazy var transactionService: TransactionServiceProtocol = {
-        TransactionService(context: coreDataManager.viewContext)
+        TransactionService(context: context)
     }()
     
     lazy var categoryService: CategoryServiceProtocol = {
-        CategoryService(context: coreDataManager.viewContext)
+        CategoryService(context: context)
     }()
     
     lazy var goalService: FinancialGoalServiceProtocol = {
-        FinancialGoalService(context: coreDataManager.viewContext)
+        FinancialGoalService(context: context)
     }()
     
     lazy var tagService: TagServiceProtocol = {
-        TagService(context: coreDataManager.viewContext)
+        TagService(context: context)
     }()
 }

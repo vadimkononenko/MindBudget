@@ -16,7 +16,11 @@ enum HomeSection: String, CaseIterable, Identifiable {
 }
 
 struct HomeView: View {
-    @State private var viewModel: HomeViewModel = HomeViewModel(serviceContainer: ServiceContainer())
+    @State private var viewModel: HomeViewModel
+    
+    init(viewModel: HomeViewModel = HomeViewModel(serviceContainer: ServiceFactory.createServices())) {
+            self._viewModel = State(initialValue: viewModel)
+        }
     
     var body: some View {
         NavigationStack {
@@ -29,5 +33,11 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView()
+    let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
+    
+    HomeView(viewModel: viewModel)
+        .environment(
+            \.managedObjectContext,
+             CoreDataManager.preview.previewContext
+        )
 }

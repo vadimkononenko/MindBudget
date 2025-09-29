@@ -24,6 +24,9 @@ class HomeViewModel {
         self.budgetService = serviceContainer.budgetService
         self.categoryService = serviceContainer.categoryService
         self.transactionService = serviceContainer.transactionService
+        
+        loadAllActiveBudgets()
+        getLatestBudget()
     }
     
     // MARK: - Budget

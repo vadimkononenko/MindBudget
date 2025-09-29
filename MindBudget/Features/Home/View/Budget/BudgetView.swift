@@ -24,6 +24,12 @@ struct BudgetView: View {
 }
 
 #Preview {
-    BudgetView()
-        .environment(HomeViewModel())
+    let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
+    
+    return BudgetView()
+        .environment(viewModel)
+        .environment(
+            \.managedObjectContext,
+             CoreDataManager.preview.previewContext
+        )
 }

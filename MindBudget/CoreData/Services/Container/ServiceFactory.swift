@@ -11,4 +11,11 @@ class ServiceFactory {
     static func createServices() -> ServiceContainer {
         return ServiceContainer()
     }
+    
+    static func createPreviewServices() -> ServiceContainer {
+        return ServiceContainer(
+            coreDataManager: CoreDataManager.preview,
+            usePreview: true
+        )
+    }
 }
