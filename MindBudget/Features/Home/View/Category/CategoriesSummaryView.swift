@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CategoriesSummaryView: View {
+    @Environment(HomeViewModel.self) private var viewModel
+    
     private let sectionTitle = "Categories"
     
     var body: some View {
@@ -21,6 +23,13 @@ struct CategoriesSummaryView: View {
     }
 }
 
-#Preview {
-    CategoriesSummaryView()
+struct CategoriesSummaryView_Previews: PreviewProvider {
+    static var previews: some View {
+        CategoriesSummaryView()
+            .environment(HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices()))
+            .environment(
+                \.managedObjectContext,
+                 CoreDataManager.preview.previewContext
+            )
+    }
 }

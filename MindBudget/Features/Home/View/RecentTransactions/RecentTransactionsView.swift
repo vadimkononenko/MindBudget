@@ -23,6 +23,13 @@ struct RecentTransactionsView: View {
     }
 }
 
-#Preview {
-    RecentTransactionsView()
+struct RecentTransactionView_Previews: PreviewProvider {
+    static var previews: some View {
+        RecentTransactionsView()
+            .environment(HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices()))
+            .environment(
+                \.managedObjectContext,
+                 CoreDataManager.preview.previewContext
+            )
+    }
 }

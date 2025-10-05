@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeSectionTitleView: View {
     let title: String
-    let navigate: () -> Void
+    let action: () -> Void
     
     var body: some View {
         HStack {
@@ -19,13 +19,9 @@ struct HomeSectionTitleView: View {
             Spacer()
             
             Button {
-                navigate()
+                action()
             } label: {
-                HStack {
-                    Text("View All")
-                    
-                    Image(systemName: "arrow.right.circle")
-                }
+                Image(systemName: "ellipsis.circle")
             }
         }
     }

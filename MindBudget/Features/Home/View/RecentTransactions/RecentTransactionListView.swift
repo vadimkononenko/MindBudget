@@ -20,7 +20,3 @@ struct RecentTransactionListView: View {
         .listStyle(.plain)
     }
 }
-
-//#Preview {
-//    RecentTransactionListView()
-//}

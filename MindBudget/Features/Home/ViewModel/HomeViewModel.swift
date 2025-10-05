@@ -19,6 +19,7 @@ class HomeViewModel {
     var categories: [Category] = []
     var transactions: [Transaction] = []
     var selectedBudget: Budget?
+    var chartData: [CategoryChartDataModel] = []
     
     init(serviceContainer: ServiceContainer = ServiceFactory.createServices()) {
         self.budgetService = serviceContainer.budgetService
@@ -27,6 +28,8 @@ class HomeViewModel {
         
         loadAllActiveBudgets()
         getLatestBudget()
+        loadAllTransactions()
+        loadAllCategories()
     }
     
     // MARK: - Budget
@@ -56,7 +59,22 @@ class HomeViewModel {
         return "\(amount) \(currencySymbol)"
     }
     
+    // MARK: - Category
+    
+    func loadAllCategories() {
+        categories = categoryService.fetchActiveCategories(type: .expense)
+    }
+    
+    func prepareChartData() {
+        guard let selectedBudget = selectedBudget else { return }
+        chartData = categoryService.prepareCategoryChartDataOptimized(for: selectedBudget)
+    }
+    
     // MARK: - Transaction
+    
+    func loadAllTransactions() {
+        transactions = transactionService.fetchTransactions(for: selectedBudget, period: nil)
+    }
     
     func getTransactionIcon(for transaction: Transaction) -> String {
         transaction.category?.iconSystemName ?? "questionmark.circle"

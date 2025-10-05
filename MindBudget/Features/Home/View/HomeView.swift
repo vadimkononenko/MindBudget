@@ -32,12 +32,14 @@ struct HomeView: View {
     }
 }
 
-#Preview {
-    let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
-    
-    HomeView(viewModel: viewModel)
-        .environment(
-            \.managedObjectContext,
-             CoreDataManager.preview.previewContext
-        )
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
+        
+        HomeView(viewModel: viewModel)
+            .environment(
+                \.managedObjectContext,
+                 CoreDataManager.preview.previewContext
+            )
+    }
 }

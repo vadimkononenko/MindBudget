@@ -35,7 +35,6 @@ final class CoreDataManager {
     lazy var previewInMemory: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "MindBudget")
         
-        // Правильная настройка in-memory store
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
@@ -243,6 +242,19 @@ extension CoreDataManager {
         transaction4.updatedAt = Date()
         transaction4.budget = nil
         transaction4.category = nil
+        
+        let transaction5 = Transaction(context: context)
+        transaction5.id = UUID()
+        transaction5.amount = 150.0
+        transaction5.type = TransactionType.expense.rawValue
+        transaction5.note = "Miscellaneous expenses"
+        transaction5.date = Date()
+        transaction5.currencyCode = AppCurrency.uah.rawValue
+        transaction5.isArchived = false
+        transaction5.createdAt = Date()
+        transaction5.updatedAt = Date()
+        transaction5.budget = budget
+        transaction5.category = nil
         
         do {
             try context.save()

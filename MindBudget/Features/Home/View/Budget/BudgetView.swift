@@ -13,7 +13,9 @@ struct BudgetView: View {
     var body: some View {
         VStack {
             if let selectedBudget = viewModel.selectedBudget {
-                BudgetTitleView(budget: selectedBudget)
+                HomeSectionTitleView(title: selectedBudget.name ?? "UNTITLED") {
+                    // TODO: FINISH
+                }
                 
                 BudgetInfoView(budget: selectedBudget)
             } else {
@@ -23,13 +25,15 @@ struct BudgetView: View {
     }
 }
 
-#Preview {
-    let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
-    
-    return BudgetView()
-        .environment(viewModel)
-        .environment(
-            \.managedObjectContext,
-             CoreDataManager.preview.previewContext
-        )
+struct BudgetView_Previews: PreviewProvider {
+    static var previews: some View {
+        let viewModel = HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices())
+        
+        return BudgetView()
+            .environment(viewModel)
+            .environment(
+                \.managedObjectContext,
+                 CoreDataManager.preview.previewContext
+            )
+    }
 }
