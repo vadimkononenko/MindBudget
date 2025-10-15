@@ -34,39 +34,42 @@ extension Budget {
 
 // MARK: - Computed Properties
 extension Budget {
+    /// Computed properties using BudgetCalculator
+    /// These are lightweight wrappers - use BudgetCalculator directly for better performance
     var actualIncome: Decimal {
         let transactions = self.transactions as? Set<Transaction> ?? []
-        return transactions
-            .filter { transaction in
-                transaction.type == TransactionType.income.rawValue
-            }
-            .reduce(0) { $0 + ($1.amount?.decimalValue ?? 0) }
+        return BudgetCalculator.calculateActualIncome(from: transactions)
     }
-    
+
     var actualExpences: Decimal {
         let transactions = self.transactions as? Set<Transaction> ?? []
-        return transactions
-            .filter { transaction in
-                transaction.type == TransactionType.expense.rawValue
-            }
-            .reduce(0) { $0 + ($1.amount?.decimalValue ?? 0) }
+        return BudgetCalculator.calculateActualExpenses(from: transactions)
     }
-    
+
     var remainingBudget: Decimal {
         let plannedAmount = plannedAmount?.decimalValue ?? 0
-        return plannedAmount - (actualIncome + actualExpences)
+        return BudgetCalculator.calculateRemainingBudget(
+            plannedAmount: plannedAmount,
+            actualIncome: actualIncome,
+            actualExpenses: actualExpences
+        )
     }
-    
+
     var progressPercentage: Double {
-        return 0
+        let plannedAmount = plannedAmount?.decimalValue ?? 0
+        return BudgetCalculator.calculateProgressPercentage(
+            actualExpenses: actualExpences,
+            plannedAmount: plannedAmount
+        )
     }
-    
-    // For Enum
+
+    // MARK: - Enum Wrappers
+
     var period: BudgetPeriod {
         get { BudgetPeriod(rawValue: periodRaw ?? "week") ?? .week }
         set { periodRaw = newValue.rawValue }
     }
-    
+
     var currency: AppCurrency {
         get { AppCurrency(rawValue: currencyRaw ?? AppCurrency.uah.rawValue) ?? .uah }
         set { currencyRaw = newValue.rawValue }

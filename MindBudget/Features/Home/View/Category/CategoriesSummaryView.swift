@@ -14,10 +14,10 @@ struct CategoriesSummaryView: View {
     
     var body: some View {
         VStack {
-            HomeSectionTitleView(title: sectionTitle) {
+            HomeSectionTitleView(title: sectionTitle, action: {
                 // TODO: Navigation To View All
-            }
-            
+            })
+
             CategoryInfoView()
         }
     }
@@ -26,10 +26,13 @@ struct CategoriesSummaryView: View {
 struct CategoriesSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         CategoriesSummaryView()
-            .environment(HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices()))
+            .environment(HomeViewModel(
+                serviceContainer: ServiceFactory.createPreviewServices(),
+                context: CoreDataManager.preview.viewContext
+            ))
             .environment(
                 \.managedObjectContext,
-                 CoreDataManager.preview.previewContext
+                CoreDataManager.preview.viewContext
             )
     }
 }

@@ -50,11 +50,17 @@ class FinancialGoalService: BaseService, FinancialGoalServiceProtocol {
     func fetchActiveGoals() -> [FinancialGoal] {
         let predicate = NSPredicate(format: "isFinished == false")
         let sortDescriptor = NSSortDescriptor(keyPath: \FinancialGoal.priority, ascending: false)
-        return fetch(
-            entityType: FinancialGoal.self,
-            predicate: predicate,
-            sortDescriptors: [sortDescriptor]
-        )
+
+        do {
+            return try fetch(
+                entityType: FinancialGoal.self,
+                predicate: predicate,
+                sortDescriptors: [sortDescriptor]
+            )
+        } catch {
+            print("Error fetching active goals: \(error)")
+            return []
+        }
     }
         
     func updateGoalProgress(_ goal: FinancialGoal) throws -> Bool {

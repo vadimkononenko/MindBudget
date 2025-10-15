@@ -18,26 +18,32 @@ class TagService: BaseService, TagServiceProtocol {
     func createTag(name: String, color: String) throws -> Tag {
         // Check if tag already exists
         let existingPredicate = NSPredicate(format: "name == %@", name)
-        if let existingTag = fetchFirst(
+        if let existingTag = try? fetchFirst(
             entityType: Tag.self,
             predicate: existingPredicate
         ) {
             return existingTag
         }
-            
+
         let tag = Tag(context: context)
         tag.id = UUID()
         tag.name = name
         tag.color = color
         tag.createdAt = Date()
-            
+
         try save()
         return tag
     }
-        
+
     func fetchAllTags() -> [Tag] {
         let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-        return fetch(entityType: Tag.self, sortDescriptors: [sortDescriptor])
+
+        do {
+            return try fetch(entityType: Tag.self, sortDescriptors: [sortDescriptor])
+        } catch {
+            print("Error fetching tags: \(error)")
+            return []
+        }
     }
     
     func deleteTag(_ tag: Tag) throws -> Bool {
@@ -47,14 +53,21 @@ class TagService: BaseService, TagServiceProtocol {
     }
         
     func deleteUnusedTags() throws -> Bool {
-        let unusedTags = fetch(entityType: Tag.self).filter { tag in
+        let allTags: [Tag]
+        do {
+            allTags = try fetch(entityType: Tag.self)
+        } catch {
+            throw error
+        }
+
+        let unusedTags = allTags.filter { tag in
             return (tag.transactions?.count ?? 0) == 0
         }
-            
+
         for tag in unusedTags {
             context.delete(tag)
         }
-            
+
         try save()
         return true
     }

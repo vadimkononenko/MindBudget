@@ -74,16 +74,28 @@ class BudgetService: BaseService, BudgetServiceProtocol {
             keyPath: \Budget.createdAt,
             ascending: false
         )
-        return fetch(
-            entityType: Budget.self,
-            predicate: predicate,
-            sortDescriptors: [sortDescriptor]
-        )
+
+        do {
+            return try fetch(
+                entityType: Budget.self,
+                predicate: predicate,
+                sortDescriptors: [sortDescriptor]
+            )
+        } catch {
+            print("Error fetching active budgets: \(error)")
+            return []
+        }
     }
-        
+
     func fetchBudget(by id: UUID) -> Budget? {
         let predicate = NSPredicate(format: "id == %@", id as CVarArg)
-        return fetchFirst(entityType: Budget.self, predicate: predicate)
+
+        do {
+            return try fetchFirst(entityType: Budget.self, predicate: predicate)
+        } catch {
+            print("Error fetching budget by ID: \(error)")
+            return nil
+        }
     }
         
     func updateBudget(

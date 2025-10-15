@@ -7,74 +7,88 @@
 import CoreData
 import SwiftUI
 
-final class CoreDataManager {
-    // MARK: - Shared Instance
+final class CoreDataManager: CoreDataManaging {
     static let shared = CoreDataManager()
-    
+
     static let preview: CoreDataManager = {
-        let manager = CoreDataManager()
-        let context = manager.previewContext
+        let manager = CoreDataManager(inMemory: true)
+        let context = manager.viewContext
         manager.createMockData(context)
         return manager
     }()
-    
-    // MARK: - Init
-    private init() {}
 
-    // MARK: - Persistent Containers
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "MindBudget")
-        container.loadPersistentStores { _, error in
+    // MARK: - Properties
+    private let persistentContainer: NSPersistentContainer
+    private var _backgroundContext: NSManagedObjectContext?
+
+    // MARK: - Init
+    init(inMemory: Bool = false) {
+        persistentContainer = NSPersistentContainer(name: "MindBudget")
+
+        if inMemory {
+            let description = NSPersistentStoreDescription()
+            description.type = NSInMemoryStoreType
+            persistentContainer.persistentStoreDescriptions = [description]
+        }
+
+        persistentContainer.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Unresolved error \(error)")
             }
         }
-        return container
-    }()
-    
-    lazy var previewInMemory: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "MindBudget")
-        
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        container.persistentStoreDescriptions = [description]
-        
-        container.loadPersistentStores(completionHandler: { _, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-            
-        return container
-    }()
+
+        // Configure merge policies
+        persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
+        persistentContainer.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+    }
 
     // MARK: - Contexts
     var viewContext: NSManagedObjectContext {
         persistentContainer.viewContext
     }
-    
-    var previewContext: NSManagedObjectContext {
-        previewInMemory.viewContext
-    }
-    
+
     var backgroundContext: NSManagedObjectContext {
-        return persistentContainer.newBackgroundContext()
+        if _backgroundContext == nil {
+            _backgroundContext = persistentContainer.newBackgroundContext()
+            _backgroundContext?.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        }
+        return _backgroundContext!
     }
 
     // MARK: - Saving
-    func save(_ context: NSManagedObjectContext = CoreDataManager.shared.viewContext) throws {
+    func save(_ context: NSManagedObjectContext) throws {
         guard context.hasChanges else { return }
+
         do {
             try context.save()
         } catch {
-            throw error
+            throw CoreDataError.saveFailed(error)
         }
     }
-    
-    
+
+    // MARK: - Background Tasks
+    func performBackgroundTask<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            persistentContainer.performBackgroundTask { context in
+                context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+                do {
+                    let result = try block(context)
+                    if context.hasChanges {
+                        try context.save()
+                    }
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    // MARK: - Debug
     func printCoreDataURL() {
         if let url = persistentContainer.persistentStoreDescriptions.first?.url {
-            print(url)
+            print("Core Data URL: \(url)")
         }
     }
 }

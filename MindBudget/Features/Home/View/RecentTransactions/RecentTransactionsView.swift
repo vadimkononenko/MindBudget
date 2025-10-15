@@ -14,10 +14,10 @@ struct RecentTransactionsView: View {
     
     var body: some View {
         VStack {
-            HomeSectionTitleView(title: sectionTitle) {
+            HomeSectionTitleView(title: sectionTitle, action: {
                 // TODO: Navigation To View All
-            }
-            
+            })
+
             RecentTransactionListView(transactions: viewModel.transactions)
         }
     }
@@ -26,10 +26,13 @@ struct RecentTransactionsView: View {
 struct RecentTransactionView_Previews: PreviewProvider {
     static var previews: some View {
         RecentTransactionsView()
-            .environment(HomeViewModel(serviceContainer: ServiceFactory.createPreviewServices()))
+            .environment(HomeViewModel(
+                serviceContainer: ServiceFactory.createPreviewServices(),
+                context: CoreDataManager.preview.viewContext
+            ))
             .environment(
                 \.managedObjectContext,
-                 CoreDataManager.preview.previewContext
+                CoreDataManager.preview.viewContext
             )
     }
 }

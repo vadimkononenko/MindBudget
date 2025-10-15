@@ -65,11 +65,11 @@ class TransactionService: BaseService, TransactionServiceProtocol {
         var predicates: [NSPredicate] = [
             NSPredicate(format: "isArchived == false")
         ]
-            
+
         if let budget = budget {
             predicates.append(NSPredicate(format: "budget == %@", budget))
         }
-            
+
         if let period = period {
             predicates
                 .append(
@@ -80,17 +80,22 @@ class TransactionService: BaseService, TransactionServiceProtocol {
                     )
                 )
         }
-            
+
         let compoundPredicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: predicates
         )
         let sortDescriptor = NSSortDescriptor(keyPath: \Transaction.date, ascending: false)
-            
-        return fetch(
-            entityType: Transaction.self,
-            predicate: compoundPredicate,
-            sortDescriptors: [sortDescriptor]
-        )
+
+        do {
+            return try fetch(
+                entityType: Transaction.self,
+                predicate: compoundPredicate,
+                sortDescriptors: [sortDescriptor]
+            )
+        } catch {
+            print("Error fetching transactions: \(error)")
+            return []
+        }
     }
         
     func updateTransaction(
@@ -126,11 +131,17 @@ class TransactionService: BaseService, TransactionServiceProtocol {
             category
         )
         let sortDescriptor = NSSortDescriptor(keyPath: \Transaction.date, ascending: false)
-        return fetch(
-            entityType: Transaction.self,
-            predicate: predicate,
-            sortDescriptors: [sortDescriptor]
-        )
+
+        do {
+            return try fetch(
+                entityType: Transaction.self,
+                predicate: predicate,
+                sortDescriptors: [sortDescriptor]
+            )
+        } catch {
+            print("Error fetching transactions by category: \(error)")
+            return []
+        }
     }
         
     func addTags(to transaction: Transaction, tags: [Tag]) throws -> Bool {

@@ -8,39 +8,41 @@
 import Foundation
 import CoreData
 
-class ServiceContainer {
-    private let coreDataManager: CoreDataManager
-    private let usePreview: Bool
-    
-    init(
-        coreDataManager: CoreDataManager = CoreDataManager.shared,
-        usePreview: Bool = false
-    ) {
-        self.coreDataManager = coreDataManager
-        self.usePreview = usePreview
+/// Protocol for service container to enable dependency injection and testing
+protocol ServiceContaining {
+    var budgetService: BudgetServiceProtocol { get }
+    var transactionService: TransactionServiceProtocol { get }
+    var categoryService: CategoryServiceProtocol { get }
+    var goalService: FinancialGoalServiceProtocol { get }
+    var tagService: TagServiceProtocol { get }
+}
+
+class ServiceContainer: ServiceContaining {
+    private let context: NSManagedObjectContext
+
+    init(coreDataManager: CoreDataManaging, usePreview: Bool = false) {
+        self.context = usePreview ? coreDataManager.viewContext : coreDataManager.viewContext
     }
-    
-    private var context: NSManagedObjectContext {
-        usePreview ? coreDataManager.previewContext : coreDataManager.viewContext
-    }
-    
-    lazy var budgetService: BudgetServiceProtocol = {
+
+    // MARK: - Services
+
+    var budgetService: BudgetServiceProtocol {
         BudgetService(context: context)
-    }()
-    
-    lazy var transactionService: TransactionServiceProtocol = {
+    }
+
+    var transactionService: TransactionServiceProtocol {
         TransactionService(context: context)
-    }()
-    
-    lazy var categoryService: CategoryServiceProtocol = {
+    }
+
+    var categoryService: CategoryServiceProtocol {
         CategoryService(context: context)
-    }()
-    
-    lazy var goalService: FinancialGoalServiceProtocol = {
+    }
+
+    var goalService: FinancialGoalServiceProtocol {
         FinancialGoalService(context: context)
-    }()
-    
-    lazy var tagService: TagServiceProtocol = {
+    }
+
+    var tagService: TagServiceProtocol {
         TagService(context: context)
-    }()
+    }
 }

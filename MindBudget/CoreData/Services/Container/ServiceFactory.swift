@@ -8,11 +8,14 @@
 import Foundation
 
 class ServiceFactory {
-    static func createServices() -> ServiceContainer {
-        return ServiceContainer()
+    static func createServices() -> ServiceContaining {
+        return ServiceContainer(
+            coreDataManager: CoreDataManager.shared,
+            usePreview: false
+        )
     }
-    
-    static func createPreviewServices() -> ServiceContainer {
+
+    static func createPreviewServices() -> ServiceContaining {
         return ServiceContainer(
             coreDataManager: CoreDataManager.preview,
             usePreview: true
